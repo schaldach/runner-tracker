@@ -1,8 +1,8 @@
 import { View, StyleSheet, Text, TextInput } from 'react-native';
 
-function InputField({ fieldName, stateFunction, state, placeholder, passwordType }) {
+function InputField({ fieldName, stateFunction, state, placeholder, passwordType, bottomMargin }) {
   return (
-    <View style={styles.container}>
+    <View style={{justifyContent: 'center', marginBottom: bottomMargin?15:0}}>
       <Text style={styles.fieldName}>{fieldName}</Text>
       <TextInput secureTextEntry={passwordType} multiline={false} style={styles.fieldInput} value={state} onChange={stateFunction} placeholder={placeholder} />
     </View>
@@ -10,11 +10,9 @@ function InputField({ fieldName, stateFunction, state, placeholder, passwordType
 }
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-  },
   fieldName: {
     color: '#fff',
+    fontFamily: 'Helvetica',
     paddingBottom: 4,
     fontSize: 16,
   },
@@ -22,6 +20,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     color: '#fff',
+    fontFamily: 'Helvetica',
     outlineStyle: 'none',
     borderRadius: 10,
     width: 250,
