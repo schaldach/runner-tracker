@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
   fieldName: {
     color: '#fff',
     fontFamily: 'Helvetica',
-    paddingBottom: 4,
     fontSize: 16,
   },
   fieldInput: {
@@ -23,7 +22,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
     outlineStyle: 'none',
     borderRadius: 10,
-    width: 250,
+    width: 280,
     backgroundColor: '#535353'
   }
 });

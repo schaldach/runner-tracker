@@ -1,17 +1,19 @@
-import { View, StyleSheet, Text, TextInput } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-function Button({ text }) {
+function GradientButton({ text, onPress }) {
     return (
-        <LinearGradient start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }} colors={['#FF416C', '#FF4B2B']} style={styles.button}>
+        <TouchableOpacity onPress={onPress}>
+            <LinearGradient start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }} colors={['#FF416C', '#FF4B2B']} style={styles.button}>
             <Text style={styles.text}>{text}</Text>
         </LinearGradient>
+        </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     button: {
-        marginTop: 30,
+        marginTop: 20,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 50,
@@ -25,4 +27,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Button;
+export default GradientButton;
