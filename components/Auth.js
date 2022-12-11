@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import GradientButton from './GradientButton.js';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
@@ -15,8 +14,8 @@ function Auth({ navigation }) {
             {loginMode ?
                 <View style={styles.login}>
                     <Text style={styles.text}>Entrar na Conta</Text>
-                    <InputField placeholder='Email' bottomMargin={true} state={email} stateFunction={setEmail} fieldName='Email' />
-                    <InputField placeholder='Senha' passwordType={true} state={password} stateFunction={setPassword} fieldName='Senha' />
+                    <InputField placeholder='Email' bottomMargin={true} topMargin={true} state={email} stateFunction={setEmail} fieldName='Email' />
+                    <InputField placeholder='Senha' passwordType={true} bottomMargin={true} state={password} stateFunction={setPassword} fieldName='Senha' />
                     <GradientButton text='ENTRAR' onPress={() => navigation.navigate('Landing')}/>
                     <View style={styles.loginchange}>
                         <Text style={styles.text}>Não possui uma conta?</Text>
@@ -24,7 +23,6 @@ function Auth({ navigation }) {
                             <Text style={styles.discretetext}>Fazer Cadastro</Text>
                         </TouchableOpacity>
                     </View>
-                    <StatusBar style="auto" />
                 </View> :
                 <View style={styles.login}>
                     <Text style={styles.text}>Fazer Cadastro</Text>
@@ -39,7 +37,6 @@ function Auth({ navigation }) {
                             <Text style={styles.discretetext}>Fazer Login</Text>
                         </TouchableOpacity>
                     </View>
-                    <StatusBar style="auto" />
                 </View>
             }
         </View>
@@ -51,7 +48,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontFamily: 'Helvetica',
         flexDirection: 'column',
-        backgroundColor: '#191414',
+        backgroundColor: '#000',
         alignItems: 'center',
     },
     discretetext: {
@@ -66,8 +63,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Helvetica',
         color: '#fff',
-        borderBottomColor: '#fff',
-        borderBottomWidth: 2,
         fontSize: 64,
     },
     loginchange: {
