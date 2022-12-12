@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator tabBar={props => <Navbar {...props} routes={['Auth', 'Landing']} />}>
+      <Tab.Navigator tabBar={props => <Navbar {...props} routes={['Landing', 'Auth']} />}>
         <Stack.Screen options={{ headerShown: false }} name="Landing" component={LandingScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Auth" component={Auth} />
       </Tab.Navigator>

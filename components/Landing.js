@@ -1,16 +1,22 @@
 import GradientButton from './GradientButton';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Dimensions } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 
 function LandingScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>RUNNER</Text>
+            <Image style={styles.logo} source={require('../assets/runnerlogo.png')} />
             <View style={styles.description}>
+                <Text style={styles.subtitletext}>Bem vindo ao Runner!</Text>
+                <Text style={styles.descriptiontext}>Um aplicativo para você acompanhar as suas caminhadas, corridas, pedaladas, e muito mais.</Text>
                 <GradientButton text='COMEÇAR' onPress={() => navigation.navigate('Auth')} />
+                <Image style={styles.landingimg} source={require('../assets/running.jpg')} />
             </View>
         </View>
     );
 }
+
+const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     container: {
@@ -19,19 +25,34 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#fff',
         alignItems: 'center',
+        paddingTop: 50
     },
-    description:{
-        flex: 3
+    description: {
+        flex: 3,
+        alignItems: 'center'
     },
-    title: {
-        flex: 1,
-        textAlignVertical: 'bottom',
-        textAlign: 'center',
+    logo: {
+        width: 250,
+        height: 60,
+
+    },
+    landingimg: {
+        width: windowWidth,
+        height: windowWidth*4/5,
+        marginTop: 20
+    },
+    descriptiontext:{
         fontFamily: 'Helvetica',
-        color: '#000',
-        borderBottomColor: '#fff',
-        borderBottomWidth: 2,
-        fontSize: 64,
+        textAlign: 'center',
+        paddingHorizontal: 20,
+        fontSize: 20
+    },
+    subtitletext:{
+        fontFamily: 'Helvetica',
+        fontSize: 30,
+        marginTop: 20,
+        textAlign: 'center',
+        fontWeight: 'bold'
     }
 });
 
