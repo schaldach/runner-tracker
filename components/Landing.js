@@ -10,7 +10,7 @@ function LandingScreen({ navigation }) {
                 <Text style={styles.subtitletext}>Bem vindo ao Runner!</Text>
                 <Text style={styles.descriptiontext}>Um aplicativo para você acompanhar as suas caminhadas, corridas, pedaladas, e muito mais.</Text>
                 <GradientButton text='COMEÇAR' onPress={() => navigation.navigate('Auth')} />
-                <Image style={styles.landingimg} source={require('../assets/running.jpg')} />
+                <Image style={styles.landingimg} source={require('../assets/running.png')} />
             </View>
         </View>
     );
