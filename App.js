@@ -15,10 +15,10 @@ const Stack = createNativeStackNavigator();
 
 function HomeNav({ navigation }) {
   return (
-    <Tab.Navigator tabBar={props => <Navbar {...props} routes={['Home', 'Track', 'Profile']} />}>
-      <Stack.Screen options={{ headerShown: false }} name="Home" component={Home} />
-      <Stack.Screen options={{ headerShown: false }} name="Track" component={Track} />
-      <Stack.Screen options={{ headerShown: false }} name="Profile" component={Profile} />
+    <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={props => <Navbar {...props} routes={['Home', 'Track', 'Profile']} />}>
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Track" component={Track} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   )
 }
@@ -33,12 +33,11 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Landing" component={LandingScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Auth" component={Auth} />
-        <Stack.Screen options={{ headerShown: false }} name="HomeNav" component={HomeNav} />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Landing" component={LandingScreen} />
+        <Stack.Screen name="Auth" component={Auth} />
+        <Stack.Screen name="HomeNav" component={HomeNav} />
       </Stack.Navigator>
     </NavigationContainer>
-
   );
 }

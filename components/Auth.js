@@ -1,6 +1,6 @@
 import GradientButton from './GradientButton.js';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import InputField from './InputField.js';
 
 function Auth({ navigation }) {
@@ -10,13 +10,14 @@ function Auth({ navigation }) {
     const [loginMode, changeLogin] = useState(true)
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>RUNNER</Text>
+            <Image style={styles.logo} source={require('../assets/runnerlogo.png')} />
             {loginMode ?
                 <View style={styles.login}>
                     <Text style={styles.text}>Entrar na Conta</Text>
                     <InputField placeholder='Email' bottomMargin={true} topMargin={true} state={email} stateFunction={setEmail} fieldName='Email' />
                     <InputField placeholder='Senha' passwordType={true} bottomMargin={true} state={password} stateFunction={setPassword} fieldName='Senha' />
-                    <GradientButton text='ENTRAR' onPress={() => navigation.navigate('Landing')}/>
+                    <GradientButton text='ENTRAR' onPress={() => navigation.navigate('HomeNav', {screen:'Home'})}/>
+                    <GradientButton text='INÍCIO' onPress={() => navigation.navigate('Landing')}/>
                     <View style={styles.loginchange}>
                         <Text style={styles.text}>Não possui uma conta?</Text>
                         <TouchableOpacity onPress={() => changeLogin(false)}>
@@ -30,7 +31,8 @@ function Auth({ navigation }) {
                     <InputField placeholder='Confirmar email' bottomMargin={true} state={email} stateFunction={setEmail} fieldName='Confirmar email' />
                     <InputField placeholder='Usuário' bottomMargin={true} state={username} stateFunction={setUsername} fieldName='Nome' />
                     <InputField placeholder='Senha' passwordType={true} state={password} stateFunction={setPassword} fieldName='Senha' />
-                    <GradientButton text='CADASTRAR' onPress={() => navigation.navigate('Landing')}/>
+                    <GradientButton text='CADASTRAR' onPress={() => navigation.navigate('HomeNav', {screen:'Home'})}/>
+                    <GradientButton text='INÍCIO' onPress={() => navigation.navigate('Landing')}/>
                     <View style={styles.loginchange}>
                         <Text style={styles.text}>Já possui uma conta?</Text>
                         <TouchableOpacity onPress={() => changeLogin(true)}>
@@ -48,22 +50,19 @@ const styles = StyleSheet.create({
         flex: 1,
         fontFamily: 'Helvetica',
         flexDirection: 'column',
-        backgroundColor: '#000',
+        backgroundColor: '#fff',
         alignItems: 'center',
+        paddingTop: 100
+    },
+    logo: {
+        width: 250,
+        height: 60,
     },
     discretetext: {
         fontSize: 16,
         fontFamily: 'Helvetica',
         marginLeft: 10,
         color: '#FF4B2B',
-    },
-    title: {
-        flex: 1,
-        textAlignVertical: 'bottom',
-        textAlign: 'center',
-        fontFamily: 'Helvetica',
-        color: '#fff',
-        fontSize: 64,
     },
     loginchange: {
         flexDirection: 'row',
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     text: {
-        color: '#fff',
+        color: '#000',
         fontFamily: 'Helvetica',
         fontSize: 16,
     }

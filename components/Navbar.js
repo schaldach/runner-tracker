@@ -1,14 +1,14 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
 function Navbar({ routes, navigation }) {
   return (
-    <View style={{ flexDirection: 'row', justifyContent:'center', alignItems:'center' }}>
+    <View style={styles.navbar}>
       {routes.map((route, index) => {
         const label = route
         const isFocused = false
         const onPress = () => {
-          if(!isFocused){
-            navigation.navigate({ name: route, merge: true });
+          if (!isFocused) {
+            navigation.navigate('HomeNav',{ screen: route });
           }
         };
 
@@ -16,10 +16,10 @@ function Navbar({ routes, navigation }) {
           <TouchableOpacity
             accessibilityRole="button"
             onPress={onPress}
-            style={{ flex: 1, marginVertical:10}}
             key={index}
+            style={styles.navitem}
           >
-            <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
+            <Text style={{ color: isFocused ? '#673ab7' : '#fff' }}>
               {label}
             </Text>
           </TouchableOpacity>
@@ -28,5 +28,18 @@ function Navbar({ routes, navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  navbar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+    alignItems: 'center'
+  },
+  navitem: {
+    flex: 1,
+    alignItems: 'center'
+  }
+})
 
 export default Navbar

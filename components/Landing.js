@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#fff',
         alignItems: 'center',
-        paddingTop: 50
+        paddingTop: 100
     },
     description: {
         flex: 3,
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
     logo: {
         width: 250,
         height: 60,
-
     },
     landingimg: {
         width: windowWidth,

@@ -11,19 +11,19 @@ function InputField({ fieldName, stateFunction, state, placeholder, passwordType
 
 const styles = StyleSheet.create({
   fieldName: {
-    color: '#fff',
+    color: '#000',
     fontFamily: 'Helvetica',
     fontSize: 16,
   },
   fieldInput: {
     padding: 10,
     fontSize: 20,
-    color: '#fff',
+    color: '#000',
     fontFamily: 'Helvetica',
     outlineStyle: 'none',
     borderRadius: 10,
     width: 280,
-    backgroundColor: '#535353'
+    backgroundColor: '#efefef'
   }
 });
 
