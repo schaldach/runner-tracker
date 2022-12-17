@@ -1,5 +1,6 @@
 import { useFonts } from 'expo-font';
 import * as React from 'react';
+import { useState } from 'react';
 import Navbar from './components/Navbar.js';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,8 +15,9 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function HomeNav({ navigation }) {
+  const [activeTab, setTab] = useState(0)
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={props => <Navbar {...props} routes={['Home', 'Track', 'Profile']} />}>
+    <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={props => <Navbar activeTab={activeTab} setTab={setTab} {...props} routes={['Home', 'Track', 'Profile']} />}>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Track" component={Track} />
       <Tab.Screen name="Profile" component={Profile} />

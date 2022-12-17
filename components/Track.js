@@ -47,10 +47,11 @@ function Track({ navigation }) {
                             zoomControlEnabled={true}
                             // onRegionChange={(region) => setRegion(region)}
                             region={region}
+                            mapType='hybrid'
                             style={styles.mapview}
                         >
                             <Marker coordinate={coordinates} />
-                            <Polyline strokeColor='#FF4B2B' strokeWidth={5} coordinates={[{latitude: -26.9190254,longitude: -48.649837,}, {latitude: -26.9190254,longitude: -48.652837,}, {latitude: -26.9200254,longitude: -48.655837,}]}/>
+                            <Polyline strokeColor={'#FF4B2B'} lineCap='round' strokeWidth={5} coordinates={[{ latitude: -26.9190254, longitude: -48.649837, }, { latitude: -26.9190254, longitude: -48.652837, }, { latitude: -26.9200254, longitude: -48.655837, }]} />
                         </MapView>
                         <Text style={styles.text}>Longitude: {region.longitude}</Text>
                         <Text style={styles.text}>Latitude: {region.latitude}</Text>

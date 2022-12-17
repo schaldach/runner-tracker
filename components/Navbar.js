@@ -1,13 +1,14 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
-function Navbar({ routes, navigation }) {
+function Navbar({ routes, navigation, setTab, activeTab }) {
   return (
     <View style={styles.navbar}>
       {routes.map((route, index) => {
         const label = route
-        const isFocused = false
+        const isFocused = index === activeTab
         const onPress = () => {
           if (!isFocused) {
+            setTab(index)
             navigation.navigate('HomeNav',{ screen: route });
           }
         };

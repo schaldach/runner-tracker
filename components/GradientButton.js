@@ -5,8 +5,8 @@ function GradientButton({ text, onPress }) {
     return (
         <TouchableOpacity onPress={onPress}>
             <LinearGradient start={{ x: 0.0, y: 1.0 }} end={{ x: 1.0, y: 1.0 }} colors={['#FF416C', '#FF4B2B']} style={styles.button}>
-            <Text style={styles.text}>{text}</Text>
-        </LinearGradient>
+                <Text style={styles.text}>{text}</Text>
+            </LinearGradient>
         </TouchableOpacity>
     );
 }
