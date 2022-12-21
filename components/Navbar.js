@@ -9,9 +9,12 @@ function Navbar({ routes, navigation, setTab, activeTab }) {
         const onPress = () => {
           if (!isFocused) {
             setTab(index)
-            navigation.navigate('HomeNav',{ screen: route });
+            navigation.navigate('HomeNav', { screen: route });
           }
         };
+        const icon = route === 'Home' ? isFocused ? require('../assets/homeiconfilled.png') : require('../assets/homeicon.png') :
+          route === 'Track' ? isFocused ? require('../assets/trackiconfilled.png') : require('../assets/trackicon.png') :
+            isFocused ? require('../assets/usericonfilled.png') : require('../assets/usericon.png')
 
         return (
           <TouchableOpacity
@@ -20,7 +23,8 @@ function Navbar({ routes, navigation, setTab, activeTab }) {
             key={index}
             style={styles.navitem}
           >
-            <Text style={{ color: isFocused ? '#673ab7' : '#fff' }}>
+            <Image style={styles.imgicon} source={icon}></Image>
+            <Text style={{ color: isFocused ? '#FF4B2B' : '#000' }}>
               {label}
             </Text>
           </TouchableOpacity>
@@ -33,13 +37,20 @@ function Navbar({ routes, navigation, setTab, activeTab }) {
 const styles = StyleSheet.create({
   navbar: {
     flexDirection: 'row',
+    paddingVertical: 5,
     justifyContent: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     alignItems: 'center'
   },
   navitem: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+  imgicon: {
+    width: 30,
+    height: 30
   }
 })
 
