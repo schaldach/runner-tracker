@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import GradientButton from './GradientButton';
@@ -12,40 +12,52 @@ function Track({ navigation }) {
     const [coordinatesTrail, setTrail] = useState([])
     const [trackType, setTrack] = useState('Livre')
     const [elapsedDistance, setDistance] = useState(0)
+    const watchingStatus = useRef(null)
 
     const options = {
         enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000,
+        distanceInterval: 10,
     };
 
-    function startTrack(){
-
+    function distanceBetweenCoordinates(la1, lo1, la2, lo2){
+        let lat1 = la1*Math.PI/180
+        let lon1 = lo1*Math.PI/180
+        let lat2 = la2*Math.PI/180
+        let lon2 = lo2*Math.PI/180
+        distance = 6371 * 1000 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2-lon1) + Math.sin(lat1) * Math.sin(lat2))
+        return distance
     }
 
-    useEffect(() => {
-        async function getFirstLocation() {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                return
-            }
-            const locationWatcher = await Location.watchPositionAsync(options, (location) => {
-                setCoordinates({
-                    longitude: location.coords.longitude,
-                    latitude: location.coords.latitude,
-                })
-                setRegion({
-                    longitude: location.coords.longitude,
-                    latitude: location.coords.latitude,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                })
-                console.log(location.coords)
-            });
-
+    async function startTrack(){
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            return
         }
-        getFirstLocation()
-    }, [])
+        watchingStatus = await Location.watchPositionAsync(options, (location) => {
+            let newCoordinates = {
+                longitude: location.coords.longitude,
+                latitude: location.coords.latitude,
+            }
+            setCoordinates(newCoordinates)
+            setRegion({
+                longitude: location.coords.longitude,
+                latitude: location.coords.latitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            })
+            let newDistance = elapsedDistance
+            newDistance += distanceBetweenCoordinates(newCoordinates.latitude, newCoordinates.longitude, coordinatesTrail[coordinatesTrail.length-1].latitude, coordinatesTrail[coordinatesTrail.length-1].longitude)
+            setDistance(newDistance)
+            let newTrail = [...coordinatesTrail]
+            newTrail.push(newCoordinates)
+            setTrail(newTrail)
+            console.log(location.coords)
+        });
+    }
+
+    async function stopTrack(){
+        Location.stopWatchingAsync(watchingStatus);
+    }
 
     return (
         <View style={styles.container}>
@@ -66,7 +78,7 @@ function Track({ navigation }) {
                         <Text style={styles.text}>Você percorreu:</Text>
                         <Text style={styles.textDisplay}>{elapsedDistance}m</Text>
                         <GradientButton text='COMEÇAR CORRIDA' onPress={() => startTrack()}/>
-
+                        <GradientButton text='TERMINAR CORRIDA' onPress={() => stopTrack()}/>
                     </View>
                 )
                 :
