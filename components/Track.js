@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import GradientButton from './GradientButton';
@@ -13,6 +13,8 @@ function Track({ navigation }) {
     const [trackStatus, setStatus] = useState(false)
     const [elapsedDistance, setDistance] = useState(0)
     const [watchingStatus, setWatcher] = useState(null)
+    const allCoordinates = useRef(null)
+    allCoordinates.current = [...coordinatesTrail]
 
     const options = {
         enableHighAccuracy: true,
@@ -35,7 +37,7 @@ function Track({ navigation }) {
         let lat2 = la2 * Math.PI / 180
         let lon2 = lo2 * Math.PI / 180
         distance = 6371 * 1000 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1) + Math.sin(lat1) * Math.sin(lat2))
-        return distance
+        return Math.floor(distance)
     }
 
     useEffect(() => {
@@ -75,9 +77,10 @@ function Track({ navigation }) {
                         latitudeDelta: 0.01,
                         longitudeDelta: 0.01,
                     })
-                    let newTrail = [...coordinatesTrail]
+                    let newTrail = allCoordinates.current
                     newTrail.push(newCoordinates)
                     setTrail(newTrail)
+                    console.log(newTrail)
                 }
                 catch (err) {
                     console.log(err)
@@ -94,6 +97,7 @@ function Track({ navigation }) {
         try {
             watchingStatus.remove()
             setStatus(false)
+            setDistance(0)
             setTrail([])
         }
         catch (err) {
@@ -120,6 +124,8 @@ function Track({ navigation }) {
                         <Text style={styles.text}>Latitude: {region.latitude}</Text>
                         <Text style={styles.text}>Você percorreu:</Text>
                         <Text style={styles.textDisplay}>{elapsedDistance}m</Text>
+                        <Text style={styles.text}>Você registrou:</Text>
+                        <Text style={styles.textDisplay}>{coordinatesTrail.length} posições</Text>
                         <GradientButton text='TERMINAR CORRIDA' onPress={() => stopTrack()} />
                     </View>
                 )
@@ -128,7 +134,6 @@ function Track({ navigation }) {
                     <View>
                         <GradientButton text='COMEÇAR CORRIDA' onPress={() => startTrack()} />
                     </View>
-
                 )
             }
         </View>
