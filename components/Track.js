@@ -66,6 +66,7 @@ function Track({ navigation }) {
             setStatus(true)
             const watcher = await Location.watchPositionAsync(options, (location) => {
                 try {
+                    if(location.coords.accuracy>30){return}
                     let newCoordinates = {
                         longitude: location.coords.longitude,
                         latitude: location.coords.latitude,
@@ -77,10 +78,10 @@ function Track({ navigation }) {
                         latitudeDelta: 0.01,
                         longitudeDelta: 0.01,
                     })
+                    console.log(location.coords.accuracy)
                     let newTrail = allCoordinates.current
                     newTrail.push(newCoordinates)
                     setTrail(newTrail)
-                    console.log(newTrail)
                 }
                 catch (err) {
                     console.log(err)
