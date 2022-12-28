@@ -7,8 +7,12 @@ import * as TaskManager from 'expo-task-manager';
 import { Dimensions } from 'react-native';
 
 function Track({ navigation }) {
-    const [region, setRegion] = useState(null);
-    const [coordinates, setCoordinates] = useState(null)
+    const [region, setRegion] = useState({
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
+    });
     const [coordinatesTrail, setTrail] = useState([])
     const [trackStatus, setStatus] = useState(false)
     const [elapsedDistance, setDistance] = useState(0)
@@ -66,12 +70,11 @@ function Track({ navigation }) {
             setStatus(true)
             const watcher = await Location.watchPositionAsync(options, (location) => {
                 try {
-                    if(location.coords.accuracy>30){return}
+                    if (location.coords.accuracy > 30) { return }
                     let newCoordinates = {
                         longitude: location.coords.longitude,
                         latitude: location.coords.latitude,
                     }
-                    setCoordinates(newCoordinates)
                     setRegion({
                         longitude: location.coords.longitude,
                         latitude: location.coords.latitude,
@@ -118,7 +121,7 @@ function Track({ navigation }) {
                             mapType='hybrid'
                             style={styles.mapview}
                         >
-                            <Marker coordinate={coordinates} />
+                            <Marker coordinate={region} />
                             <Polyline geodesic={true} strokeColor={'#FF4B2B'} lineCap='round' strokeWidth={5} coordinates={coordinatesTrail} />
                         </MapView>
                         <Text style={styles.text}>Longitude: {region.longitude}</Text>

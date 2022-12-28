@@ -24,9 +24,13 @@ function Navbar({ routes, navigation, setTab, activeTab }) {
             style={styles.navitem}
           >
             <Image style={styles.imgicon} source={icon}></Image>
-            <Text style={{ color: isFocused ? '#FF4B2B' : '#000' }}>
-              {label}
-            </Text>
+            {
+              isFocused ?
+                <Text style={{ color: isFocused ? '#FF4B2B' : '#000' }}>
+                  {label}
+                </Text> :
+                ''
+            }
           </TouchableOpacity>
         );
       })}
