@@ -26,11 +26,9 @@ function Track({ navigation }) {
     };
 
     useEffect(() => {
-        if (coordinatesTrail.length) {
+        if (coordinatesTrail.length > 1) {
             let newDistance = elapsedDistance
-            if (coordinatesTrail.length > 1) {
-                newDistance += distanceBetweenCoordinates(coordinatesTrail[coordinatesTrail.length - 2].latitude, coordinatesTrail[coordinatesTrail.length - 2].longitude, coordinatesTrail[coordinatesTrail.length - 1].latitude, coordinatesTrail[coordinatesTrail.length - 1].longitude)
-            }
+            newDistance += distanceBetweenCoordinates(coordinatesTrail[coordinatesTrail.length - 2].latitude, coordinatesTrail[coordinatesTrail.length - 2].longitude, coordinatesTrail[coordinatesTrail.length - 1].latitude, coordinatesTrail[coordinatesTrail.length - 1].longitude)
             setDistance(newDistance)
         }
     }, [coordinatesTrail])
@@ -57,6 +55,13 @@ function Track({ navigation }) {
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
             })
+            let newCoordinates = {
+                longitude: location.coords.longitude,
+                latitude: location.coords.latitude,
+            }
+            let newTrail = allCoordinates.current
+            newTrail.push(newCoordinates)
+            setTrail(newTrail)
         }
         firstLocation()
     }, [])
