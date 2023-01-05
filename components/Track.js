@@ -35,12 +35,7 @@ TaskManager.defineTask(BACKGROUND_TRACKING, async ({ data, error }) => {
 });
 
 function Track({ navigation }) {
-    const [region, setRegion] = useState({
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
-    });
+    const [region, setRegion] = useState(null);
     const [coordinatesTrail, setTrail] = useState([])
     const [trackStatus, setStatus] = useState(false)
     const [elapsedDistance, setDistance] = useState(0)
@@ -51,6 +46,7 @@ function Track({ navigation }) {
     const options = {
         enableHighAccuracy: true,
         distanceInterval: 10,
+        accuracy: Location.Accuracy.BestForNavigation
     };
 
     useEffect(() => {
@@ -80,8 +76,9 @@ function Track({ navigation }) {
         }
         fetchBackgroundCoordinates()
         async function firstLocation() {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
+            let foreground = await Location.requestForegroundPermissionsAsync();
+            let background = await Location.requestBackgroundPermissionsAsync();
+            if (foreground.status !== 'granted' || background.status !== 'granted') {
                 return
             }
             const location = await Location.getCurrentPositionAsync({});
@@ -104,11 +101,12 @@ function Track({ navigation }) {
 
     async function startTrack() {
         try {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted' || region === null) {
+            if (region === null) {
                 return
             }
+
             setStatus(true)
+            await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING, options)
             const watcher = await Location.watchPositionAsync(options, (location) => {
                 try {
                     if (location.coords.accuracy > 30) { return }
