@@ -4,7 +4,35 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import GradientButton from './GradientButton';
 import * as Location from "expo-location";
 import * as TaskManager from 'expo-task-manager';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dimensions } from 'react-native';
+
+const BACKGROUND_TRACKING = 'BACKGROUND_TRACKING'
+
+async function getSavedCoordinates() {
+    try {
+        const item = await AsyncStorage.getItem('background_coords');
+        return item ? JSON.parse(item) : [];
+    } catch (e) {
+        return [];
+    }
+
+}
+
+TaskManager.defineTask(BACKGROUND_TRACKING, async ({ data, error }) => {
+    if (error) {
+        console.error(error);
+        return;
+    }
+    if (data) {
+        const { locations } = data;
+        console.log('backgroundLocationTracker received new locations: ', locations)
+        const coords = location[0].coords
+        let allCoordinates = await getSavedCoordinates()
+        allCoordinates.push(coords)
+        await AsyncStorage.setItem('background_coords', allCoordinates)
+    }
+});
 
 function Track({ navigation }) {
     const [region, setRegion] = useState({
@@ -38,11 +66,19 @@ function Track({ navigation }) {
         let lon1 = lo1 * Math.PI / 180
         let lat2 = la2 * Math.PI / 180
         let lon2 = lo2 * Math.PI / 180
-        distance = 6371 * 1000 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1) + Math.sin(lat1) * Math.sin(lat2))
+        const distance = 6371 * 1000 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1) + Math.sin(lat1) * Math.sin(lat2))
         return Math.floor(distance)
     }
 
     useEffect(() => {
+        async function fetchBackgroundCoordinates() {
+            let pastTrail = [...coordinatesTrail]
+            let backgroundTrail = await AsyncStorage.getItem('background_coords')
+            let newTrail = backgroundTrail ? backgroundTrail.concat(pastTrail) : pastTrail
+            setTrail(newTrail)
+            await AsyncStorage.setItem('background_coords', [])
+        }
+        fetchBackgroundCoordinates()
         async function firstLocation() {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
@@ -105,6 +141,7 @@ function Track({ navigation }) {
     async function stopTrack() {
         try {
             watchingStatus.remove()
+            Location.stopLocationUpdatesAsync('background-tracking');
             setStatus(false)
             setDistance(0)
             setTrail([])
