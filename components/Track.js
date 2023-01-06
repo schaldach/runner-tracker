@@ -98,16 +98,13 @@ function Track({ navigation }) {
             if (region === null) {
                 return
             }
-
             setStatus(true)
+            setTrail([region])
+            await AsyncStorage.setItem('background_coords', JSON.stringify([]))
             await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING)
             const watcher = await Location.watchPositionAsync(options, (location) => {
                 try {
                     if (location.coords.accuracy > 30) { return }
-                    let newCoordinates = {
-                        longitude: location.coords.longitude,
-                        latitude: location.coords.latitude,
-                    }
                     setRegion({
                         longitude: location.coords.longitude,
                         latitude: location.coords.latitude,
@@ -119,7 +116,7 @@ function Track({ navigation }) {
                 catch (err) {
                     console.log(err)
                 }
-            });
+            })
             setWatcher(watcher)
         }
         catch (err) {
@@ -134,7 +131,7 @@ function Track({ navigation }) {
             await AsyncStorage.setItem('background_coords', JSON.stringify([]))
             setStatus(false)
             setDistance(0)
-            setTrail([])
+            setTrail([region])
         }
         catch (err) {
             console.log(err)
