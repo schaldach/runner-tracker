@@ -11,10 +11,10 @@ const BACKGROUND_TRACKING = 'BACKGROUND_TRACKING'
 
 async function getSavedCoordinates() {
     try {
-        const item = await AsyncStorage.getItem('background_coords');
-        return item ? JSON.parse(item) : [];
+        const item = await AsyncStorage.getItem('background_coords')
+        return item ? JSON.parse(item) : []
     } catch (e) {
-        return [];
+        return []
     }
 
 }
@@ -25,12 +25,16 @@ TaskManager.defineTask(BACKGROUND_TRACKING, async ({ data, error }) => {
         return;
     }
     if (data) {
-        const { locations } = data;
-        console.log('backgroundLocationTracker received new locations: ', locations)
-        const coords = location[0].coords
+        const { locations } = data
+        const coords = locations[0].coords
+        if (coords.accuracy > 30) { return }
         let allCoordinates = await getSavedCoordinates()
-        allCoordinates.push(coords)
-        await AsyncStorage.setItem('background_coords', allCoordinates)
+        let length = allCoordinates.length
+        console.log(coords, allCoordinates)
+        if (!length || coords.longitude !== allCoordinates[length - 1].longitude || coords.latitude !== allCoordinates[length - 1].latitude) {
+            allCoordinates.push(coords)
+            await AsyncStorage.setItem('background_coords', JSON.stringify(allCoordinates))
+        }
     }
 });
 
@@ -69,10 +73,10 @@ function Track({ navigation }) {
     useEffect(() => {
         async function fetchBackgroundCoordinates() {
             let pastTrail = [...coordinatesTrail]
-            let backgroundTrail = await AsyncStorage.getItem('background_coords')
+            let backgroundTrail = JSON.parse(await AsyncStorage.getItem('background_coords'))
             let newTrail = backgroundTrail ? backgroundTrail.concat(pastTrail) : pastTrail
             setTrail(newTrail)
-            await AsyncStorage.setItem('background_coords', [])
+            await AsyncStorage.setItem('background_coords', JSON.stringify([]))
         }
         fetchBackgroundCoordinates()
         async function firstLocation() {
@@ -139,7 +143,8 @@ function Track({ navigation }) {
     async function stopTrack() {
         try {
             watchingStatus.remove()
-            Location.stopLocationUpdatesAsync('background-tracking');
+            Location.stopLocationUpdatesAsync(BACKGROUND_TRACKING)
+            await AsyncStorage.setItem('background_coords', JSON.stringify([]))
             setStatus(false)
             setDistance(0)
             setTrail([])
