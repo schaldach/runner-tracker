@@ -27,7 +27,8 @@ TaskManager.defineTask(BACKGROUND_TRACKING, async ({ data, error }) => {
     if (data) {
         const { locations } = data
         const coords = locations[0].coords
-        if (coords.accuracy > 30) { return }
+        console.log('oi', coords)
+        if (coords.accuracy > 40) { return }
         let allCoordinates = await getSavedCoordinates()
         let length = allCoordinates.length
         console.log(coords, allCoordinates)
@@ -47,19 +48,13 @@ function Track({ navigation }) {
     const allCoordinates = useRef(null)
     allCoordinates.current = [...coordinatesTrail]
 
-    const options = {
-        enableHighAccuracy: true,
-        distanceInterval: 10,
-        accuracy: Location.Accuracy.BestForNavigation
-    };
-
     useEffect(() => {
         if (coordinatesTrail.length > 1) {
             let newDistance = elapsedDistance
             newDistance += distanceBetweenCoordinates(coordinatesTrail[coordinatesTrail.length - 2].latitude, coordinatesTrail[coordinatesTrail.length - 2].longitude, coordinatesTrail[coordinatesTrail.length - 1].latitude, coordinatesTrail[coordinatesTrail.length - 1].longitude)
             setDistance(newDistance)
         }
-    }, [coordinatesTrail])
+    }, [coordinatesTrail.length])
 
     function distanceBetweenCoordinates(la1, lo1, la2, lo2) {
         let lat1 = la1 * Math.PI / 180
@@ -70,25 +65,43 @@ function Track({ navigation }) {
         return Math.floor(distance)
     }
 
-    useEffect(() => {
-        async function fetchBackgroundCoordinates() {
+    async function fetchBackgroundCoordinates() {
+        try {
             let backgroundTrail = JSON.parse(await AsyncStorage.getItem('background_coords'))
+            console.log('ola', backgroundTrail, backgroundTrail[0].latitude, backgroundTrail[0].longitude)
             setTrail(backgroundTrail)
-        }
-        fetchBackgroundCoordinates()
-        async function firstLocation() {
-            let foreground = await Location.requestForegroundPermissionsAsync();
-            let background = await Location.requestBackgroundPermissionsAsync();
-            if (foreground.status !== 'granted' || background.status !== 'granted') {
-                return
-            }
-            const location = await Location.getCurrentPositionAsync({});
             setRegion({
-                longitude: location.coords.longitude,
-                latitude: location.coords.latitude,
+                latitude: backgroundTrail[0].latitude,
+                longitude: backgroundTrail[0].longitude,
                 latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
+                longitudeDelta: 0.01
             })
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    }
+
+    useEffect(() => {
+        async function firstLocation() {
+            try {
+                let foreground = await Location.requestForegroundPermissionsAsync();
+                let background = await Location.requestBackgroundPermissionsAsync();
+                if (foreground.status !== 'granted' || background.status !== 'granted') {
+                    return
+                }
+                const location = await Location.getCurrentPositionAsync({});
+                setRegion({
+                    longitude: location.coords.longitude,
+                    latitude: location.coords.latitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                })
+            }
+            catch (err) {
+                console.log(err)
+            }
         }
         firstLocation()
     }, [])
@@ -101,23 +114,11 @@ function Track({ navigation }) {
             setStatus(true)
             setTrail([region])
             await AsyncStorage.setItem('background_coords', JSON.stringify([]))
-            await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING)
-            const watcher = await Location.watchPositionAsync(options, (location) => {
-                try {
-                    if (location.coords.accuracy > 30) { return }
-                    setRegion({
-                        longitude: location.coords.longitude,
-                        latitude: location.coords.latitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    })
-                    console.log(location.coords.accuracy)
-                }
-                catch (err) {
-                    console.log(err)
-                }
+            setInterval(fetchBackgroundCoordinates, 5000)
+            await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING, {
+                deferredUpdatesInterval: 1000,
+                deferredUpdatesDistance: 10,
             })
-            setWatcher(watcher)
         }
         catch (err) {
             console.log(err)
