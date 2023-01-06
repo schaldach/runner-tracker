@@ -72,11 +72,8 @@ function Track({ navigation }) {
 
     useEffect(() => {
         async function fetchBackgroundCoordinates() {
-            let pastTrail = [...coordinatesTrail]
             let backgroundTrail = JSON.parse(await AsyncStorage.getItem('background_coords'))
-            let newTrail = backgroundTrail ? backgroundTrail.concat(pastTrail) : pastTrail
-            setTrail(newTrail)
-            await AsyncStorage.setItem('background_coords', JSON.stringify([]))
+            setTrail(backgroundTrail)
         }
         fetchBackgroundCoordinates()
         async function firstLocation() {
@@ -92,13 +89,6 @@ function Track({ navigation }) {
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
             })
-            let newCoordinates = {
-                longitude: location.coords.longitude,
-                latitude: location.coords.latitude,
-            }
-            let newTrail = allCoordinates.current
-            newTrail.push(newCoordinates)
-            setTrail(newTrail)
         }
         firstLocation()
     }, [])
@@ -110,7 +100,7 @@ function Track({ navigation }) {
             }
 
             setStatus(true)
-            await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING, options)
+            await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING)
             const watcher = await Location.watchPositionAsync(options, (location) => {
                 try {
                     if (location.coords.accuracy > 30) { return }
@@ -125,9 +115,6 @@ function Track({ navigation }) {
                         longitudeDelta: 0.01,
                     })
                     console.log(location.coords.accuracy)
-                    let newTrail = allCoordinates.current
-                    newTrail.push(newCoordinates)
-                    setTrail(newTrail)
                 }
                 catch (err) {
                     console.log(err)
