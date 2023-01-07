@@ -16,7 +16,6 @@ async function getSavedCoordinates() {
     } catch (e) {
         return []
     }
-
 }
 
 TaskManager.defineTask(BACKGROUND_TRACKING, async ({ data, error }) => {
@@ -26,8 +25,8 @@ TaskManager.defineTask(BACKGROUND_TRACKING, async ({ data, error }) => {
     }
     if (data) {
         const { locations } = data
-        const coords = locations[0].coords
-        console.log('oi', coords)
+        const { coords } = locations[0]
+        console.log('oi', coords, locations[0])
         if (coords.accuracy > 40) { return }
         let allCoordinates = await getSavedCoordinates()
         let length = allCoordinates.length
@@ -69,6 +68,7 @@ function Track({ navigation }) {
         try {
             let backgroundTrail = JSON.parse(await AsyncStorage.getItem('background_coords'))
             console.log('ola', backgroundTrail, backgroundTrail[0].latitude, backgroundTrail[0].longitude)
+            if (backgroundTrail.length < 1) { return }
             setTrail(backgroundTrail)
             setRegion({
                 latitude: backgroundTrail[0].latitude,
@@ -113,11 +113,20 @@ function Track({ navigation }) {
             }
             setStatus(true)
             setTrail([region])
-            await AsyncStorage.setItem('background_coords', JSON.stringify([]))
-            setInterval(fetchBackgroundCoordinates, 5000)
+            const watcher = setInterval(fetchBackgroundCoordinates, 5000)
+            setWatcher(watcher)
             await Location.startLocationUpdatesAsync(BACKGROUND_TRACKING, {
+                foregroundService: {
+                    notificationBody: "Location Service",
+                    notificationTitle: "Driver App",
+                    notificationColor: "blue",
+                },
+                activityType: ActivityType.AutomotiveNavigation,
+                distanceInterval: 1,
                 deferredUpdatesInterval: 1000,
                 deferredUpdatesDistance: 10,
+                pausesUpdatesAutomatically: false,
+                showsBackgroundLocationIndicator: true,
             })
         }
         catch (err) {
@@ -127,12 +136,11 @@ function Track({ navigation }) {
 
     async function stopTrack() {
         try {
-            watchingStatus.remove()
             Location.stopLocationUpdatesAsync(BACKGROUND_TRACKING)
-            await AsyncStorage.setItem('background_coords', JSON.stringify([]))
+            await AsyncStorage.setItem('background_coords', JSON.stringify([region]))
             setStatus(false)
             setDistance(0)
-            setTrail([region])
+            clearInterval(watchingStatus)
         }
         catch (err) {
             console.log(err)
